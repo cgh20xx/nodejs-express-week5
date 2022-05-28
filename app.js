@@ -42,17 +42,48 @@ app.use((req, res, next) => {
   });
 });
 
-// 捕捉 express middleware 或 router 的 next() 中的 Error
-app.use(function (err, req, res, next) {
-  // set locals, only providing error in development
-
-  const localError = req.app.get('env') === 'development' ? err : {};
-
-  res.status(err.statusCode || 500).json({
+// 顯示開發環境錯誤訊息
+const resErrorDev = (err, res) => {
+  console.log(err.name);
+  res.status(err.statusCode).json({
     status: false,
     message: err.message,
-    error: localError,
+    error: err,
+    stack: err.stack,
   });
+};
+// 顯示生產環境錯誤訊息
+const resErrorProd = (err, res) => {
+  if (err.isOperational) {
+    res.status(err.statusCode).json({
+      status: false,
+      message: err.message,
+    });
+  } else {
+    // log 紀錄
+    console.error('出現重大錯誤', err);
+    // 送出罐頭預設訊息
+    res.status(500).json({
+      status: false,
+      message: '系統錯誤，請恰系統管理員',
+    });
+  }
+};
+
+// 錯誤處理：捕捉 next() 中的 Error
+app.use(function (err, req, res, next) {
+  err.statusCode = err.statusCode || 500;
+  // dev 環境顯示詳細錯誤訊息
+  if (process.env.NODE_ENV === 'dev') {
+    return resErrorDev(err, res);
+  }
+  // production 環境顯示簡單(模糊)的錯誤訊息
+  if (err.name === 'ValidationError') {
+    err.message = '資料欄位未填寫正確，請重新輸入！'; // 故意不顯示 mongoose 的 message
+    err.isOperational = true;
+    return resErrorProd(err, res);
+  }
+  resErrorProd(err, res);
 });
 
 // 未捕捉到的 Error  (如：使用了 Axios 有用 .then 但未 .catch)

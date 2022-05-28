@@ -58,14 +58,18 @@ const posts = {
 
     // 只開放新增 user content image
     // 若 create 報錯(validationError) 也會被 process.on('unhandledRejection') 捕捉到
-    const newPost = await PostModel.create({
-      user: body.user,
-      content: body.content,
-      image: body.image,
-      // tags: body.tags,
-      // type: body.type,
-    });
-    successResponse(res, newPost);
+    try {
+      const newPost = await PostModel.create({
+        user: body.user,
+        content: body.content,
+        image: body.image,
+        // tags: body.tags,
+        // type: body.type,
+      });
+      successResponse(res, newPost);
+    } catch (error) {
+      next(error);
+    }
   },
   /**
    * 刪除所有貼文
