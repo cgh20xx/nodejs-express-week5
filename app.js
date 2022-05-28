@@ -4,6 +4,22 @@ const cookieParser = require('cookie-parser');
 const logger = require('morgan');
 const cors = require('cors');
 
+// 補捉程式紅字錯誤 (如: aaa is not defined)
+process.on('uncaughtException', (err) => {
+  // 記錄錯誤下來(未來可找戰犯)，等到服務都處理完後，停掉該 process
+  console.error('Uncaughted Exception！');
+  console.error(err.name);
+  console.error(err.message);
+  console.error(err.stack); // node.js 專有的 stack (不該出現在 production)
+  process.exit(1);
+});
+
+// 未捕捉到的 catch  (如：使用了 Axios 有用 .then 但未 .catch)
+process.on('unhandledRejection', (reason, promise) => {
+  console.error('未捕捉到的 rejection：', promise, '原因：', reason);
+  // 記錄於 log 上
+});
+
 // 1. 連接資料庫
 require('./connections');
 
@@ -31,7 +47,7 @@ app.use((req, res, next) => {
   });
 });
 
-// 補捉系統錯誤 (只在開發環境顯示詳細錯誤，生產模式顯示簡易錯誤)
+// 補捉 express middleware 或 router 的 next() 中的 new Error()
 app.use(function (err, req, res, next) {
   // set locals, only providing error in development
   const localError = req.app.get('env') === 'development' ? err : {};
