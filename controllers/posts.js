@@ -57,19 +57,16 @@ const posts = {
       );
 
     // 只開放新增 user content image
-    // 若 create 報錯(validationError) 也會被 process.on('unhandledRejection') 捕捉到
-    try {
-      const newPost = await PostModel.create({
-        user: body.user,
-        content: body.content,
-        image: body.image,
-        // tags: body.tags,
-        // type: body.type,
-      });
-      successResponse(res, newPost);
-    } catch (error) {
-      next(error);
-    }
+    // 現在 await PostModel.create 不再需要 try catch 包起來
+    // 若 mongoose 發生 validationError 會被 handleErrorAsync 裡的 catch 統一處理！
+    const newPost = await PostModel.create({
+      user: body.user,
+      content: body.content,
+      image: body.image,
+      // tags: body.tags,
+      // type: body.type,
+    });
+    successResponse(res, newPost);
   },
   /**
    * 刪除所有貼文
