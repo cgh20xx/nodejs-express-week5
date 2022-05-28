@@ -5,14 +5,14 @@ const successResponse = (res, data) => {
   });
 };
 
-const errorResponse = (res, err) => {
-  res.status(400).json({
-    status: false,
-    message: err.message,
-  });
-};
+// const errorResponse = (res, err) => {
+//   res.status(400).json({
+//     status: false,
+//     message: err.message,
+//   });
+// };
 
 module.exports = {
   successResponse,
-  errorResponse,
+  // errorResponse,
 };

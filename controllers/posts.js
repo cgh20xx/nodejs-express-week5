@@ -3,6 +3,7 @@ const {
   successResponse,
   errorResponse,
 } = require('../services/handleResponse');
+const appError = require('../services/appError');
 const posts = {
   /**
    * 查詢所有貼文
@@ -32,24 +33,24 @@ const posts = {
    * @param {Object} req
    * @param {Object} res
    */
-  async createPost(req, res) {
-    try {
-      const { body } = req;
-      if (!body.user) throw new Error('[新增失敗] user id 未填寫');
-      if (!body.content) throw new Error('[新增失敗] content 未填寫');
-      body.content = body.content?.trim(); // 頭尾去空白
-      // 只開放新增 user content image
-      const newPost = await PostModel.create({
-        user: body.user,
-        content: body.content,
-        image: body.image,
-        // tags: body.tags,
-        // type: body.type,
-      });
-      successResponse(res, newPost);
-    } catch (err) {
-      errorResponse(res, err);
-    }
+  async createPost(req, res, next) {
+    // 移除 try catch 改為 return appError();
+    const { body } = req;
+    if (!body.user) return appError(400, '[新增貼文失敗] user id 未填寫', next);
+    if (!body.content)
+      return appError(400, '[新增貼文失敗] content 未填寫', next);
+    body.content = body.content?.trim(); // 頭尾去空白
+    // 只開放新增 user content image
+
+    // 若 create 報錯(validationError) 也會被 process.on('unhandledRejection') 捕捉到
+    const newPost = await PostModel.create({
+      user: body.user,
+      content: body.content,
+      image: body.image,
+      // tags: body.tags,
+      // type: body.type,
+    });
+    successResponse(res, newPost);
   },
   /**
    * 刪除所有貼文

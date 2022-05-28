@@ -3,9 +3,9 @@ const path = require('path');
 const cookieParser = require('cookie-parser');
 const logger = require('morgan');
 const cors = require('cors');
-const { default: axios } = require('axios');
+// const { default: axios } = require('axios');
 
-// 補捉程式紅字錯誤 (如: aaa is not defined)
+// 捕捉程式紅字錯誤 (如: aaa is not defined)
 process.on('uncaughtException', (err) => {
   // 記錄錯誤下來(未來可找戰犯)，等到服務都處理完後，停掉該 process
   console.error('Uncaughted Exception！');
@@ -34,7 +34,7 @@ app.use(cors());
 app.use('/api/meta', postsRouter);
 app.use('/api/meta', usersRouter);
 
-// 補捉未處理路由
+// 捕捉未處理路由
 app.use((req, res, next) => {
   res.status(404).json({
     status: false,
@@ -42,7 +42,7 @@ app.use((req, res, next) => {
   });
 });
 
-// 補捉 express middleware 或 router 的 next() 中的 new Error()
+// 捕捉 express middleware 或 router 的 next() 中的 new Error()
 app.use(function (err, req, res, next) {
   // set locals, only providing error in development
   const localError = req.app.get('env') === 'development' ? err : {};
@@ -54,8 +54,8 @@ app.use(function (err, req, res, next) {
   });
 });
 
-// 未捕捉到的 catch  (如：使用了 Axios 有用 .then 但未 .catch)
-// 若沒偵聽 unhandledRejection 還是會被 uncaughtException 補捉到
+// 未捕捉到的 Error  (如：使用了 Axios 有用 .then 但未 .catch)
+// 若沒偵聽 unhandledRejection 還是會被 uncaughtException 捕捉到
 process.on('unhandledRejection', (reason, promise) => {
   console.error('未捕捉到的 rejection：', promise);
   console.error('原因：', reason);
