@@ -3,6 +3,7 @@ const path = require('path');
 const cookieParser = require('cookie-parser');
 const logger = require('morgan');
 const cors = require('cors');
+const { default: axios } = require('axios');
 
 // 補捉程式紅字錯誤 (如: aaa is not defined)
 process.on('uncaughtException', (err) => {
@@ -12,12 +13,6 @@ process.on('uncaughtException', (err) => {
   console.error(err.message);
   console.error(err.stack); // node.js 專有的 stack (不該出現在 production)
   process.exit(1);
-});
-
-// 未捕捉到的 catch  (如：使用了 Axios 有用 .then 但未 .catch)
-process.on('unhandledRejection', (reason, promise) => {
-  console.error('未捕捉到的 rejection：', promise, '原因：', reason);
-  // 記錄於 log 上
 });
 
 // 1. 連接資料庫
@@ -58,4 +53,15 @@ app.use(function (err, req, res, next) {
     error: localError,
   });
 });
+
+// 未捕捉到的 catch  (如：使用了 Axios 有用 .then 但未 .catch)
+// 若沒偵聽 unhandledRejection 還是會被 uncaughtException 補捉到
+process.on('unhandledRejection', (reason, promise) => {
+  console.error('未捕捉到的 rejection：', promise);
+  console.error('原因：', reason);
+  // 記錄於 log 上
+});
+
+// axios.get('http://sjoisejfsef213s.com')
+
 module.exports = app;
