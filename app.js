@@ -44,12 +44,12 @@ app.use((req, res, next) => {
 
 // 顯示開發環境錯誤訊息
 const resErrorDev = (err, res) => {
-  console.log(err.name);
+  // 底線開頭的屬性表只會出現在開發環境
   res.status(err.statusCode).json({
     status: false,
     message: err.message,
-    error: err,
-    stack: err.stack,
+    _error: err,
+    _stack: err.stack,
   });
 };
 // 顯示生產環境錯誤訊息
@@ -77,12 +77,20 @@ app.use(function (err, req, res, next) {
   if (process.env.NODE_ENV === 'dev') {
     return resErrorDev(err, res);
   }
-  // production 環境顯示簡單(模糊)的錯誤訊息
+  // production 環境顯示簡單的錯誤訊息
+  // 之後套件用的越多，會需要在這裡各別處理套件的錯誤訊息
+
+  // 客製化 mongoose 套件驗証錯誤
   if (err.name === 'ValidationError') {
     err.message = '資料欄位未填寫正確，請重新輸入！'; // 故意不顯示 mongoose 的 message
     err.isOperational = true;
     return resErrorProd(err, res);
   }
+  // 客製化 A 套件驗証錯誤
+  // ...
+  // 客製化 A 套件驗証錯誤
+  // ...
+
   resErrorProd(err, res);
 });
 
