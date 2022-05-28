@@ -35,10 +35,10 @@ const posts = {
    */
   async createPost(req, res, next) {
     // 移除 try catch 改為 return appError();
+    // next 第一個參數是 Error 的話，會導向 app.use(function (err, req, res, next) {])
     const { body } = req;
-    if (!body.user) return appError(400, '[新增貼文失敗] user id 未填寫', next);
-    if (!body.content)
-      return appError(400, '[新增貼文失敗] content 未填寫', next);
+    if (!body.user) return next(appError(400, '[新增貼文失敗] user id 未填寫'));
+    if (!body.content) return appError(400, '[新增貼文失敗] content 未填寫');
     body.content = body.content?.trim(); // 頭尾去空白
     // 只開放新增 user content image
 

@@ -42,9 +42,10 @@ app.use((req, res, next) => {
   });
 });
 
-// 捕捉 express middleware 或 router 的 next() 中的 new Error()
+// 捕捉 express middleware 或 router 的 next() 中的 Error
 app.use(function (err, req, res, next) {
   // set locals, only providing error in development
+
   const localError = req.app.get('env') === 'development' ? err : {};
 
   res.status(err.statusCode || 500).json({
@@ -56,10 +57,12 @@ app.use(function (err, req, res, next) {
 
 // 未捕捉到的 Error  (如：使用了 Axios 有用 .then 但未 .catch)
 // 若沒偵聽 unhandledRejection 還是會被 uncaughtException 捕捉到
+// Node 16.x Doc:https://nodejs.org/docs/latest-v16.x/api/process.html#event-unhandledrejection
 process.on('unhandledRejection', (reason, promise) => {
-  console.error('未捕捉到的 rejection：', promise);
-  console.error('原因：', reason);
+  console.error('未處理的 rejection：', promise); // The rejected promise.
+  console.error('原因：', reason); // The object with which the promise was rejected (typically an Error object).
   // 記錄於 log 上
+  process.exit(1);
 });
 
 // axios.get('http://sjoisejfsef213s.com')
