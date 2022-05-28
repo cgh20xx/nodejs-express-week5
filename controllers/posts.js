@@ -35,6 +35,8 @@ const posts = {
    */
   async createPost(req, res, next) {
     // 移除 try catch 改為 return appError();
+    // 移除 PostModel try catch
+
     // next 第一個參數是 Error 的話，會導向 app.use(function (err, req, res, next) {])
     const { body } = req;
     if (!body.user)
@@ -45,6 +47,7 @@ const posts = {
         })
       );
 
+    body.content = body.content?.trim(); // 頭尾去空白
     if (!body.content)
       return next(
         new AppError({
@@ -53,9 +56,7 @@ const posts = {
         })
       );
 
-    body.content = body.content?.trim(); // 頭尾去空白
     // 只開放新增 user content image
-
     // 若 create 報錯(validationError) 也會被 process.on('unhandledRejection') 捕捉到
     const newPost = await PostModel.create({
       user: body.user,
