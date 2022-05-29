@@ -1,0 +1,280 @@
+{
+	"info": {
+		"_postman_id": "ee483df5-5a58-4003-a988-a64dfaaccfe3",
+		"name": "Week5 - heroku",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "1062598"
+	},
+	"item": [
+		{
+			"name": "Post",
+			"item": [
+				{
+					"name": "取得所有貼文",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "https://hank-express-week5.herokuapp.com/api/meta/posts",
+							"protocol": "https",
+							"host": [
+								"hank-express-week5",
+								"herokuapp",
+								"com"
+							],
+							"path": [
+								"api",
+								"meta",
+								"posts"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "新增單筆貼文",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"user\": \"628a5313e49a07848750b17d\",\n    \"content\": \"aaa\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "https://hank-express-week5.herokuapp.com/api/meta/post",
+							"protocol": "https",
+							"host": [
+								"hank-express-week5",
+								"herokuapp",
+								"com"
+							],
+							"path": [
+								"api",
+								"meta",
+								"post"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "刪除所有貼文",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "https://hank-express-week5.herokuapp.com/api/meta/posts",
+							"protocol": "https",
+							"host": [
+								"hank-express-week5",
+								"herokuapp",
+								"com"
+							],
+							"path": [
+								"api",
+								"meta",
+								"posts"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "刪除單筆貼文",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "https://hank-express-week5.herokuapp.com/api/meta/post/62664d2515412f59b18a508b",
+							"protocol": "https",
+							"host": [
+								"hank-express-week5",
+								"herokuapp",
+								"com"
+							],
+							"path": [
+								"api",
+								"meta",
+								"post",
+								"62664d2515412f59b18a508b"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "修改單筆貼文",
+					"request": {
+						"method": "PATCH",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"content\": \"今天真不錯\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "https://hank-express-week5.herokuapp.com/api/meta/post/628a412a68b4ae1ed3758607",
+							"protocol": "https",
+							"host": [
+								"hank-express-week5",
+								"herokuapp",
+								"com"
+							],
+							"path": [
+								"api",
+								"meta",
+								"post",
+								"628a412a68b4ae1ed3758607"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "User",
+			"item": [
+				{
+					"name": "取得所有使用者",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "https://hank-express-week5.herokuapp.com/api/meta/users",
+							"protocol": "https",
+							"host": [
+								"hank-express-week5",
+								"herokuapp",
+								"com"
+							],
+							"path": [
+								"api",
+								"meta",
+								"users"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "新增單筆使用者",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"name\": \"hank-cc\",\n    \"email\": \"cc@bb.com\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "https://hank-express-week5.herokuapp.com/api/meta/user",
+							"protocol": "https",
+							"host": [
+								"hank-express-week5",
+								"herokuapp",
+								"com"
+							],
+							"path": [
+								"api",
+								"meta",
+								"user"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "刪除所有使用者",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "https://hank-express-week5.herokuapp.com/api/meta/users",
+							"protocol": "https",
+							"host": [
+								"hank-express-week5",
+								"herokuapp",
+								"com"
+							],
+							"path": [
+								"api",
+								"meta",
+								"users"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "刪除單筆使用者",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "https://hank-express-week5.herokuapp.com/api/meta/user/628a349002f8641861c7fc1a",
+							"protocol": "https",
+							"host": [
+								"hank-express-week5",
+								"herokuapp",
+								"com"
+							],
+							"path": [
+								"api",
+								"meta",
+								"user",
+								"628a349002f8641861c7fc1a"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "修改單筆使用者",
+					"request": {
+						"method": "PATCH",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"name\": \"Hank 123\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "https://hank-express-week5.herokuapp.com/api/meta/user/628a5f2e00d71ee0cdcc171f",
+							"protocol": "https",
+							"host": [
+								"hank-express-week5",
+								"herokuapp",
+								"com"
+							],
+							"path": [
+								"api",
+								"meta",
+								"user",
+								"628a5f2e00d71ee0cdcc171f"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		}
+	]
+}
