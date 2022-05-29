@@ -22,7 +22,7 @@ const users = {
     const { body } = req;
     body.email = body.email?.trim(); // 頭尾去空白
     if (!body.email)
-      next(
+      return next(
         new AppError({
           statusCode: 400,
           message: '[新增使用者失敗] email 未填寫',
@@ -30,10 +30,21 @@ const users = {
       );
     body.name = body.name?.trim(); // 頭尾去空白
     if (!body.name)
-      next(
+      return next(
         new AppError({
           statusCode: 400,
           message: '[新增使用者失敗] name 未填寫',
+        })
+      );
+    // 檢查 email 是否已存在 DB
+    const existUser = await UserModel.findOne({
+      email: body.email,
+    });
+    if (existUser)
+      return next(
+        new AppError({
+          statusCode: 400,
+          message: '[新增使用者失敗] email 已存在',
         })
       );
     const newUser = await UserModel.create({
@@ -63,7 +74,7 @@ const users = {
     const id = req.params.id;
     const deleteUserById = await UserModel.findByIdAndDelete(id);
     if (!deleteUserById)
-      next(
+      return next(
         new AppError({
           statusCode: 400,
           message: '[刪除使用者失敗] 沒有此 id',
@@ -81,7 +92,7 @@ const users = {
     const { body } = req;
     const id = req.params.id;
     if (body.email !== undefined)
-      next(
+      return next(
         new AppError({
           statusCode: 400,
           message: '[修改使用者失敗] 不可修改 email',
@@ -89,7 +100,7 @@ const users = {
       );
     body.name = body.name?.trim(); // 頭尾去空白
     if (!body.name)
-      next(
+      return next(
         new AppError({
           statusCode: 400,
           message: '[修改使用者失敗] name 未填寫',
@@ -109,7 +120,7 @@ const users = {
       }
     );
     if (!updateUserById)
-      next(
+      return next(
         new AppError({
           statusCode: 400,
           message: '[修改使用者失敗] 沒有此 id',
