@@ -3,6 +3,10 @@ const path = require('path');
 const cookieParser = require('cookie-parser');
 const logger = require('morgan');
 const cors = require('cors');
+const {
+  errorResponseDev,
+  errorResponseProd,
+} = require('./services/errorResponse');
 // const { default: axios } = require('axios');
 
 // 捕捉程式紅字錯誤 (如: aaa is not defined)
@@ -42,56 +46,28 @@ app.use((req, res, next) => {
   });
 });
 
-// 顯示開發環境錯誤訊息
-const resErrorDev = (err, res) => {
-  // 底線開頭的屬性表只會出現在開發環境
-  res.status(err.statusCode).json({
-    status: false,
-    message: err.message,
-    _error: err,
-    _stack: err.stack,
-  });
-};
-// 顯示生產環境錯誤訊息
-const resErrorProd = (err, res) => {
-  if (err.isOperational) {
-    res.status(err.statusCode).json({
-      status: false,
-      message: err.message,
-    });
-  } else {
-    // log 紀錄
-    console.error('出現重大錯誤', err);
-    // 送出罐頭預設訊息
-    res.status(500).json({
-      status: false,
-      message: '系統錯誤，請恰系統管理員',
-    });
-  }
-};
-
 // 錯誤處理：捕捉 next() 中的 Error
-app.use(function (err, req, res, next) {
+app.use((err, req, res, next) => {
   err.statusCode = err.statusCode || 500;
   // dev 環境顯示詳細錯誤訊息
   if (process.env.NODE_ENV === 'dev') {
-    return resErrorDev(err, res);
+    return errorResponseDev(err, res);
   }
-  // production 環境顯示簡單的錯誤訊息
+  // 以下為 production 環境顯示簡單的錯誤訊息
   // 之後套件用的越多，會需要在這裡各別處理套件的錯誤訊息
 
   // 客製化 mongoose 套件驗証錯誤
   if (err.name === 'ValidationError') {
     err.message = '資料欄位未填寫正確，請重新輸入！'; // 故意不顯示 mongoose 的 message
     err.isOperational = true;
-    return resErrorProd(err, res);
+    return errorResponseProd(err, res);
   }
   // 客製化 A 套件驗証錯誤
   // ...
-  // 客製化 A 套件驗証錯誤
+  // 客製化 B 套件驗証錯誤
   // ...
 
-  resErrorProd(err, res);
+  errorResponseProd(err, res);
 });
 
 // 未捕捉到的 Error  (如：使用了 Axios 有用 .then 但未 .catch)
@@ -103,7 +79,5 @@ process.on('unhandledRejection', (reason, promise) => {
   // 記錄於 log 上
   process.exit(1);
 });
-
-// axios.get('http://sjoisejfsef213s.com')
 
 module.exports = app;

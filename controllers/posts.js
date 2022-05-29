@@ -1,8 +1,5 @@
 const PostModel = require('../models/PostModel');
-const {
-  successResponse,
-  errorResponse,
-} = require('../services/handleResponse');
+const successResponse = require('../services/successResponse');
 const AppError = require('../services/appError');
 const posts = {
   /**

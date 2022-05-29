@@ -1,8 +1,5 @@
 const UserModel = require('../models/UserModel');
-const {
-  successResponse,
-  // errorResponse,
-} = require('../services/handleResponse');
+const successResponse = require('../services/successResponse');
 const AppError = require('../services/appError');
 const users = {
   /**
