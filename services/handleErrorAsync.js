@@ -1,3 +1,4 @@
+// 統一處理 async function 中所有的錯誤
 const handleErrorAsync = function handleErrorAsync(func) {
   // func 先將 async fun 帶入參數儲存
   // middleware 先接住 router 資料

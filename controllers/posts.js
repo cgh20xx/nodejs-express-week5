@@ -11,7 +11,7 @@ const posts = {
    * @param {Object} req
    * @param {Object} res
    */
-  async getPosts(req, res) {
+  async getPosts(req, res, next) {
     // 網址參數 timeSort: 預設貼文排序為由大到小(新到舊)。?timeSort=asc 由小到大(舊到新)
     const timeSort = req.query.timeSort == 'asc' ? 'createdAt' : '-createdAt';
     // 網址參數 q: 搜尋文章 content 包含關鍵字。?q=keyword
@@ -74,7 +74,7 @@ const posts = {
    * @param {Object} req
    * @param {Object} res
    */
-  async deletePosts(req, res) {
+  async deletePosts(req, res, next) {
     await PostModel.deleteMany({});
     successResponse(res, []);
   },
@@ -84,15 +84,18 @@ const posts = {
    * @param {Object} req
    * @param {Object} res
    */
-  async deletePostById(req, res) {
-    try {
-      const id = req.params.id;
-      const deletePostById = await PostModel.findByIdAndDelete(id);
-      if (!deletePostById) throw new Error('[刪除失敗] 沒有此 id');
-      successResponse(res, deletePostById);
-    } catch (err) {
-      errorResponse(res, err);
-    }
+  async deletePostById(req, res, next) {
+    const id = req.params.id;
+    const deletePostById = await PostModel.findByIdAndDelete(id);
+    if (!deletePostById)
+      return next(
+        new AppError({
+          statusCode: 400,
+          message: '[刪除貼文失敗] 沒有此 id',
+        })
+      );
+
+    successResponse(res, deletePostById);
   },
   /**
    * 修改單筆貼文
@@ -100,34 +103,49 @@ const posts = {
    * @param {Object} req
    * @param {Object} res
    */
-  async updatePostById(req, res) {
-    try {
-      const { body } = req;
-      const id = req.params.id;
-      body.content = body.content?.trim(); // 頭尾去空白
-      if (body.user) throw new Error('[修改失敗] 不可修改 user');
-      if (!body.content) throw new Error('[修改失敗] content 未填寫');
-      // 只開放修改 conent image (user 不可改)
-      const updatePostById = await PostModel.findByIdAndUpdate(
-        id,
-        {
-          content: body.content,
-          image: body.image,
-          // tags: body.tags,
-          // type: body.type,
-        },
-        {
-          // 加這行才會返回更新後的資料，否則為更新前的資料。
-          returnDocument: 'after',
-          // update 相關語法預設 runValidators: false，需手動設寪 true。Doc:https://mongoosejs.com/docs/validation.html#update-validators
-          runValidators: true,
-        }
+  async updatePostById(req, res, next) {
+    const { body } = req;
+    const id = req.params.id;
+
+    if (body.user)
+      return next(
+        new AppError({
+          statusCode: 400,
+          message: '[修改貼文失敗] 不可修改 user',
+        })
       );
-      if (!updatePostById) throw new Error('[修改失敗] 沒有此 id');
-      successResponse(res, updatePostById);
-    } catch (err) {
-      errorResponse(res, err);
-    }
+    body.content = body.content?.trim(); // 頭尾去空白
+    if (!body.content)
+      return next(
+        new AppError({
+          statusCode: 400,
+          message: '[修改貼文失敗] content 未填寫',
+        })
+      );
+    // 只開放修改 conent image (user 不可改)
+    const updatePostById = await PostModel.findByIdAndUpdate(
+      id,
+      {
+        content: body.content,
+        image: body.image,
+        // tags: body.tags,
+        // type: body.type,
+      },
+      {
+        // 加這行才會返回更新後的資料，否則為更新前的資料。
+        returnDocument: 'after',
+        // update 相關語法預設 runValidators: false，需手動設寪 true。Doc:https://mongoosejs.com/docs/validation.html#update-validators
+        runValidators: true,
+      }
+    );
+    if (!updatePostById)
+      return next(
+        new AppError({
+          statusCode: 400,
+          message: '[修改失敗] 沒有此 id',
+        })
+      );
+    successResponse(res, updatePostById);
   },
 };
 module.exports = posts;
