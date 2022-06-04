@@ -1,4 +1,5 @@
 const PostModel = require('../models/PostModel');
+const UserModel = require('../models/UserModel');
 const successResponse = require('../services/successResponse');
 const AppError = require('../services/appError');
 const posts = {
@@ -41,6 +42,18 @@ const posts = {
         new AppError({
           statusCode: 400,
           message: '[新增貼文失敗] user id 未填寫',
+        })
+      );
+
+    // POST 新增貼文時，斷有沒有這個使用者，
+    // 如果傳入不存在的 id ( 相似 id 但使用者資料庫中沒有此 id )，
+    // 也會被新增成功，但 user 會是 null。
+    const findUser = await UserModel.findById(body.user);
+    if (!findUser)
+      return next(
+        new AppError({
+          statusCode: 400,
+          message: '[新增貼文失敗] user id 不存在',
         })
       );
 
